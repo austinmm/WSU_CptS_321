@@ -1,0 +1,13 @@
+{
+  "User": {
+    "Id": 114,
+    "Username": "43074",
+    "Name": "amarino",
+    "Email": "amarino@eecs.wsu.edu",
+    "AvatarUrl": "https://secure.gravatar.com/avatar/b6288fdedef01ded9daf669cdbda10c2?s=80&d=identicon",
+    "PrivateToken": "218b03e88ca856aa51e818dc0024c106dd37763825455294ab63a2c6fea30e4b",
+    "Host": "https://gitlab.eecs.wsu.edu/",
+    "TwoFactorEnabled": false,
+    "ApiVersion": 3
+  }
+}
