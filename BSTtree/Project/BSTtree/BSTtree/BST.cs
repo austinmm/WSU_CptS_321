@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -27,7 +27,8 @@ namespace BSTtree
         }
 
         //Checks if the BST is empty
-        public bool IsEmpty() {
+        public bool IsEmpty()
+        {
             return this.root == null ? true : false;
         }
 
@@ -56,7 +57,7 @@ namespace BSTtree
         }
 
         private Node Insert(Node _root, int _value)
-        {          
+        {
             //If the value passed in is less than the current node in the BST
             if (_root.Value > _value)
             {
@@ -115,10 +116,10 @@ namespace BSTtree
         //Returns the depth of the tree
         static public int Depth(Node _root)
         {
-            if (_root == null) { return -1; }
+            if (_root == null) { return 0; }
             int Left = BST.Depth(_root.Left);
             int Right = BST.Depth(_root.Right);
-            return Left > Right ? Left + 1: Right + 1;
+            return Left > Right ? Left + 1 : Right + 1;
         }
 
         static public int MinimumLevels(Node root, Nullable<int> count = null)
@@ -127,7 +128,7 @@ namespace BSTtree
             if (!count.HasValue) { BST.NodeCount(root, ref value); }
             //Minimum = Floor(ln(2 * Total-Nodes))
             //https://www.geeksforgeeks.org/relationship-number-nodes-height-binary-tree/
-            return Convert.ToInt32(Math.Floor(Math.Log(2 * value)));
+            return Convert.ToInt32(Math.Floor(Math.Log(2 * value))+1);
         }
     }
 }
