@@ -1,7 +1,0 @@
-C:\Users\austi\cs321-amarino\BSTtree\Project\BSTtree\BSTtree\bin\Debug\BSTtree.exe.config
-C:\Users\austi\cs321-amarino\BSTtree\Project\BSTtree\BSTtree\bin\Debug\BSTtree.exe
-C:\Users\austi\cs321-amarino\BSTtree\Project\BSTtree\BSTtree\bin\Debug\BSTtree.pdb
-C:\Users\austi\cs321-amarino\BSTtree\Project\BSTtree\BSTtree\obj\Debug\BSTtree.csprojAssemblyReference.cache
-C:\Users\austi\cs321-amarino\BSTtree\Project\BSTtree\BSTtree\obj\Debug\BSTtree.csproj.CoreCompileInputs.cache
-C:\Users\austi\cs321-amarino\BSTtree\Project\BSTtree\BSTtree\obj\Debug\BSTtree.exe
-C:\Users\austi\cs321-amarino\BSTtree\Project\BSTtree\BSTtree\obj\Debug\BSTtree.pdb
