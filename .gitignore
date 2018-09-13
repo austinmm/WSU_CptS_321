@@ -1,0 +1,13 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/BSTtree/.vs/BSTtree/v15/Server/sqlite3
+/BSTtree/.vs/BSTtree/v15
+/BSTtree/BSTtree/bin/Debug
+/BSTtree/BSTtree/BSTtree/.vs/BSTtree/v15/Server/sqlite3
+/BSTtree/BSTtree/BSTtree/.vs/BSTtree/v15
+/WinForms/WinForms/WinForms/obj/Debug
+/WinForms/WinForms/WinForms/bin/Debug
+/WinForms/WinForms/.vs/WinForms/v15/Server/sqlite3
+/WinForms/WinForms/.vs/WinForms/v15
