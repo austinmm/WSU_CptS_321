@@ -35,10 +35,10 @@ namespace NotepadApp
             //Fibonacci algorithm
             while(count < this.MaxLines)
             {
+                lines.Append(ReadLine(result, ++count));
                 one = two;
                 two = result;
                 result = one + two;
-                lines.Append(ReadLine(result, ++count));
             }
             //Converts stringbuilder containing fibonacci values to a string
             return lines.ToString();
