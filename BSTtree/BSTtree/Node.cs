@@ -6,25 +6,25 @@ using System.Threading.Tasks;
 
 namespace BSTtree
 {
-    class Node : IComparable, ICloneable
+    class Node<T>: ICloneable, IComparable<T>
     {
         //Fields
-        private int value;
-        private Node left;
-        private Node right;
+        private T value;
+        private Node<T> left;
+        private Node<T> right;
         //Properties
-        public int Value { get { return this.value; } set { this.value = value; } }
-        public Node Left { get { return this.left; } set { this.left = value; } }
-        public Node Right { get { return this.right; } set { this.right = value; } }
+        public T Value { get { return this.value; } set { this.value = value; } }
+        public Node<T> Left { get { return this.left; } set { this.left = value; } }
+        public Node<T> Right { get { return this.right; } set { this.right = value; } }
 
         public Node()
         {
             this.left = null;
             this.right = null;
-            this.value = 0;
+            this.value = default(T);
         }
 
-        public Node(Node _left = null, Node _right = null, int _value = 0)
+        public Node(Node<T> _left = null, Node<T> _right = null, T _value = default(T))
         {
             this.left = _left;
             this.right = _right;
@@ -34,23 +34,47 @@ namespace BSTtree
         //Clones the current Node instance and returns a new deep copy of it
         public object Clone()
         {
-            Node newNode = new Node(_left: this.left, _right: this.right, _value: this.value);
+            Node<T> newNode = new Node<T>(_left: this.left, _right: this.right, _value: this.value);
             return newNode;
         }
 
         //Checks if the current instance and the one passed in are equal
         public int CompareTo(object obj)
         {
-            return this == ((Node)obj) ? 1 : 0;
+            return this == ((Node<T>)obj) ? 1 : 0;
         }
 
-        public static bool operator <(Node _lhs, Node _rhs)
+        public static bool operator <(Node<T> _lhs, T _rhs)
         {
-            return _lhs.value < _rhs.value;
+            return Comparison(_lhs.Value, _rhs) == -1;
         }
-        public static bool operator >(Node _lhs, Node _rhs)
+
+        public static bool operator >(Node<T> _lhs, T _rhs)
         {
-            return _lhs.value > _rhs.value;
+            return Comparison(_lhs.Value, _rhs) == 1;
+        }
+
+        public static int Comparison(T _lhs, T _rhs)
+        {
+            dynamic lhs = _lhs, rhs = _rhs;
+            if (lhs < rhs)
+            {
+                return -1;
+            }
+
+            else if (lhs == rhs){
+                return 0;
+            }
+
+            else if (lhs > rhs){
+                return 1;
+            }
+            return 0;
+        }
+
+        public int CompareTo(T other)
+        {
+            return ((IComparable<T>)left.value).CompareTo(other);
         }
     }
 }

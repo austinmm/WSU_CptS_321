@@ -6,12 +6,12 @@ using System.Threading.Tasks;
 
 namespace BSTtree
 {
-    class BST
+    class BST<T>: BinTree<T>
     {
         //Root of BST tree
-        private Node root;
-        public Node Root { get { return this.root; } }
-        //Amount of nodes in BSt
+        private Node<T> root;
+        public Node<T> Root { get { return this.root; } }
+        //Amount of nodes in BST
         private int count;
         public int Count { get { return this.count; } }
 
@@ -20,7 +20,7 @@ namespace BSTtree
             this.root = null;
         }
 
-        public BST(Node _root = null, int _count = 0)
+        public BST(Node<T> _root = null, int _count = 0)
         {
             this.root = _root;
             this.count = _count;
@@ -32,67 +32,59 @@ namespace BSTtree
             return this.root == null ? true : false;
         }
 
-        //Prints out all the nodes in the BST in order
-        static public void InOrderTraversal(Node _root)
+        public static bool IsEmpty(Node<T> _root)
         {
-            if (_root != null)
-            {
-                BST.InOrderTraversal(_root.Left);
-                Console.Write($"{_root.Value} ");
-                BST.InOrderTraversal(_root.Right);
-            }
+            return _root == null ? true : false;
         }
 
-        //Inserts a new node into the tree in the correct spot
-        public Node Insert(int _value)
+        public override void Insert(T val)
         {
-            //This condition checks if the BST root node is null indicating an empty tree
             if (this.IsEmpty())
             {
-                //Creates the new node and is assigned to the root of the tree
-                this.root = this.CreateNode(_value);
-                return this.root;
+                this.root = this.CreateNode(val);
+                return;
             }
-            return this.Insert(this.root, _value);
+            Node<T> curr = this.root;
+            while (!IsEmpty(curr))
+            {
+                //If the value passed in is less than the current node in the BST
+                if (curr > val)
+                {
+                    //if the next Left node (root.Left) is null then I set root.Left to a newNode that is created
+                    if (curr.Left == null)
+                    {
+                        curr.Left = this.CreateNode(val);
+                        break;
+                    }
+                    else
+                    {
+                        curr = curr.Left;
+                        continue;
+                    }
+                }
+                //If the value passed in is greater than the current node in the BST
+                else if (curr < val)
+                {
+                    //if the next Right node (root.Right) is null then I set root.Right to a newNode that is created
+                    if (curr.Right == null)
+                    {
+                        curr.Right = this.CreateNode(val);
+                        break;
+                    }
+                    else
+                    {
+                        curr = curr.Right;
+                        continue;
+                    }
+                }
+                //If the value is the same as an already existent node in the BST...
+                else { return; }
+            }
         }
 
-        private Node Insert(Node _root, int _value)
+        private Node<T> CreateNode(T _value)
         {
-            //If the value passed in is less than the current node in the BST
-            if (_root.Value > _value)
-            {
-                //if the next Left node (root.Left) is null then I set root.Left to a newNode that is created
-                if (_root.Left == null)
-                {
-                    _root.Left = this.CreateNode(_value);
-                    return _root.Left;
-                }
-                else
-                {
-                    return this.Insert(_root.Left, _value);
-                }
-            }
-            //If the value passed in is greater than the current node in the BST
-            else if (_root.Value < _value)
-            {
-                //if the next Right node (root.Right) is null then I set root.Right to a newNode that is created
-                if (_root.Right == null)
-                {
-                    _root.Right = this.CreateNode(_value);
-                    return _root.Right;
-                }
-                else
-                {
-                    return this.Insert(_root.Right, _value);
-                }
-            }
-            //If the value is the same as an already existent node in the BST...
-            return null;
-        }
-
-        private Node CreateNode(int _value)
-        {
-            Node newNode = new Node();
+            Node<T> newNode = new Node<T>();
             if (newNode != null)
             {
                 newNode.Value = _value;
@@ -102,33 +94,108 @@ namespace BSTtree
         }
 
         //Returns the amount of nodes in the tree
-        static public void NodeCount(Node _root, ref int _count)
+        static public void NodeCount(Node<T> _root, ref int _count)
         {
             //checks if node is empty or not
             if (_root != null)
             {
-                BST.NodeCount(_root.Left, ref _count);
+                BST<T>.NodeCount(_root.Left, ref _count);
                 _count++;
-                BST.NodeCount(_root.Right, ref _count);
+                BST<T>.NodeCount(_root.Right, ref _count);
             }
         }
 
         //Returns the depth of the tree
-        static public int Depth(Node _root)
+        static public int Depth(Node<T> _root)
         {
             if (_root == null) { return 0; }
-            int Left = BST.Depth(_root.Left);
-            int Right = BST.Depth(_root.Right);
+            int Left = BST<T>.Depth(_root.Left);
+            int Right = BST<T>.Depth(_root.Right);
             return Left > Right ? Left + 1 : Right + 1;
         }
 
-        static public int MinimumLevels(Node root, Nullable<int> count = null)
+        static public int MinimumLevels(Node<T> root, Nullable<int> count = null)
         {
             int value = count.HasValue ? count.Value : 0;
-            if (!count.HasValue) { BST.NodeCount(root, ref value); }
+            if (!count.HasValue) { BST<T>.NodeCount(root, ref value); }
             //Minimum = Floor(ln(2 * Total-Nodes))
             //https://www.geeksforgeeks.org/relationship-number-nodes-height-binary-tree/
             return Convert.ToInt32(Math.Floor(Math.Log(2 * value)) + 1);
+        }
+
+        public override bool Contains(T val)
+        {
+            Node<T> curr = this.root;
+            while (!IsEmpty(curr))
+            {
+                //If the value passed in is less than the current node in the BST
+                if (curr > val)
+                {
+                    if (curr.Left == null){
+                        return false;
+                    }else{
+                        curr = curr.Left;
+                    }
+                }
+                //If the value passed in is greater than the current node in the BST
+                else if (curr < val)
+                {
+                    if (curr.Right == null){
+                        return false;
+                    } else{
+                        curr = curr.Right;
+                    }
+                }
+                //If the value equals another node's value in the BST...
+                else { return true; }
+            }
+            return false;
+        }
+
+        public override void InOrder()
+        {
+            InOrder(this.root);
+        }
+        
+        //Prints out all the nodes in the BST in order
+        private static void InOrder(Node<T> _root)
+        {
+            if (_root != null)
+            {
+                BST<T>.InOrder(_root.Left);
+                Console.Write($"{_root.Value} ");
+                BST<T>.InOrder(_root.Right);
+            }
+        }
+
+        public override void PreOrder()
+        {
+            PreOrder(this.root);
+        }
+
+        //Prints out all the nodes in the BST in order
+        private static void PreOrder(Node<T> _root)
+        {
+            if (_root != null)
+            {
+                Console.Write($"{_root.Value} ");
+                BST<T>.PreOrder(_root.Left);
+                BST<T>.PreOrder(_root.Right);
+            }
+        }
+
+        public override void PostOrder()
+        {
+            PostOrder(this.root);
+        }
+        private static void PostOrder(Node<T> _root)
+        {
+            if (_root != null)
+            {
+                BST<T>.PostOrder(_root.Left);
+                BST<T>.PostOrder(_root.Right);
+                Console.Write($"{_root.Value} ");
+            }
         }
     }
 }

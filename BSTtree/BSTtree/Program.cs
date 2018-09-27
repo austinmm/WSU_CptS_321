@@ -16,17 +16,23 @@ namespace BSTtree
             List<string> errors = new List<string>();
             Console.Write("Please Enter a list of integers ranging from 0-100 (i.e. \"1 3 5 87 9\"): ");
             string str = Console.ReadLine();
-            BST tree = new BST();
+            BST<int> tree = new BST<int>();
             SplitandInsert(str, tree, ref errors);
             Console.WriteLine("BST In-Order-Traversal: ");
-            Console.Write("\t"); BST.InOrderTraversal(tree.Root);
+            Console.Write("\t"); tree.InOrder();
+            Console.WriteLine("\nBST Pre-Order-Traversal: ");
+            Console.Write("\t"); tree.PreOrder();
+            Console.WriteLine("\nBST Post-Order-Traversal: ");
+            Console.Write("\t"); tree.PostOrder();
             Console.WriteLine("\nBST Statistics:");
+            Console.WriteLine($"\tBST Contains(11): {tree.Contains(11)}");
+            Console.WriteLine($"\tBST Contains(63): {tree.Contains(63)}");
             Console.WriteLine($"\tBST Count: {tree.Count}");
-            Console.WriteLine($"\tBST Levels (Depth): {BST.Depth(tree.Root)}");
-            Console.WriteLine($"\tBST Minimum-Level Amount: {BST.MinimumLevels(tree.Root, tree.Count)}");
+            Console.WriteLine($"\tBST Levels (Depth): {BST<int>.Depth(tree.Root)}");
+            Console.WriteLine($"\tBST Minimum-Level Amount: {BST<int>.MinimumLevels(tree.Root, tree.Count)}");
         }
 
-        static void SplitandInsert(string str, BST tree, ref List<string> errors)
+        static void SplitandInsert(string str, BST<int> tree, ref List<string> errors)
         {
             List<string> strList = str.Split(' ').ToList<string>();
             foreach (var element in strList)
