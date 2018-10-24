@@ -9,6 +9,7 @@ namespace CptS321
     public abstract class Node
     {
         public abstract double eval();
+        public abstract List<string> GetToken();
     }
 
     public class OpNode : Node, ICloneable
@@ -58,6 +59,15 @@ namespace CptS321
         {
             return new OpNode(this.operation, this.left, this.right);
         }
+
+        public override List<string> GetToken()
+        {
+            List<string> value = new List<string>();
+            value.AddRange(this.left.GetToken());
+            value.Add($"{this.operation}");
+            value.AddRange(this.right.GetToken());
+            return value;
+        }
     }
 
     public class VarNode : Node, ICloneable
@@ -93,6 +103,11 @@ namespace CptS321
         {
             return new VarNode(this.variable, this.value);
         }
+
+        public override List<string> GetToken()
+        {
+            return this.value.GetToken();
+        }
     }
 
     public class ValNode : Node, ICloneable
@@ -118,6 +133,11 @@ namespace CptS321
         public object Clone()
         {
             return new ValNode(this.value);
+        }
+
+        public override List<string> GetToken()
+        {
+            return new List<string>() { $"{this.value}" };
         }
     }
 }

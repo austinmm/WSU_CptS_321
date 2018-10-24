@@ -36,11 +36,11 @@ namespace ExpTreeTest
                         break;
                     //Set a Variable Value
                     case 2:
-                        SetVariableValue(expTree);
+                        if (expTree != null) { SetVariableValue(expTree); }
                         break;
                     //Evaluate Tree
                     case 3:
-                        Console.WriteLine(expTree.Eval());
+                        Console.WriteLine(expTree == null? 0.0 : expTree.Eval());
                         break;
                     //Quit
                     case 4:
