@@ -6,69 +6,40 @@ using System.Threading.Tasks;
 
 namespace CptS321
 {
-    /*
-     * 1.)Each node in the tree will be in one of three categories:
-        ● Node representing a constant numerical value
-        ● Node representing a variable
-        ● Node representing a binary operator
-        ● Note: No node should store any more data than it needs to. As just one example of
-            what this means, the constant value and variable nodes never have children so
-            their class declarations shouldn’t have references to children (nor should they be
-            inheriting such declarations from a parent class)
-     * 2.) Support for Varables:
-        ● Support correct functionality of variables including multi-character values (like “A2”).
-        ● Variables will start with an alphabet character, upper or lower-case, and be followed by
-            any number of alphabet characters and numerical digits (0-9).
-        ● A set of variables is stored per-expression, so creating a new expression will clear out
-            the old set of variables.
-        ● Have a default expression, something like “A1+B1+C1” would be fine, so that if setting
-            variables is the first action that the user chooses then you have an expression object to
-            work with.
-    */
-
     public class ExpTree
     {
-        private Node root;
+        //Root of Expression Tree
+        private Node root; 
         private Node Root { get { return this.root; } set { this.root = value; } }
+        //Contains ref to all VarNodes in Expression Tree
         private Dictionary<string, VarNode> varDict;
 
         public ExpTree(string expression)
         {
+            //removes whitespace from expression
             expression = expression.Replace(" ", String.Empty);
             this.varDict = new Dictionary<string, VarNode>();
             this.root = this.ConstructTree(expression);
         }
-        private Node ConstructTree(string expression) { 
+
+        //Creates the Expression tree structure
+        private Node ConstructTree(string expression)
+        {
+            Node newNode;
+            //For opNodes
             for (int i = expression.Length - 1; i >= 0; i--)
             {
                 char currChar = expression[i];
-                switch (currChar)
+                if(currChar == '+'|| currChar == '-'
+                    || currChar == '*' || currChar == '/')
                 {
-                    case '+':
-                        OpNode opNode1 = new OpNode(currChar);
-                        opNode1.Left = this.ConstructTree(expression.Substring(0, i));
-                        opNode1.Right = this.ConstructTree(expression.Substring(i + 1));
-                        return opNode1;
-                    case '-':
-                        OpNode opNode2 = new OpNode(currChar);
-                        opNode2.Left = this.ConstructTree(expression.Substring(0, i));
-                        opNode2.Right = this.ConstructTree(expression.Substring(i + 1));
-                        return opNode2;
-                    case '*':
-                        OpNode opNode3 = new OpNode(currChar);
-                        opNode3.Left = this.ConstructTree(expression.Substring(0, i));
-                        opNode3.Right = this.ConstructTree(expression.Substring(i + 1));
-                        return opNode3;
-                    case '/':
-                        OpNode opNode = new OpNode(currChar);
-                        opNode.Left = this.ConstructTree(expression.Substring(0, i));
-                        opNode.Right = this.ConstructTree(expression.Substring(i + 1));
-                        return opNode;
-                    default:
-                        break;
+                    newNode = new OpNode($"{currChar}");
+                    ((OpNode)newNode).Left = this.ConstructTree(expression.Substring(0, i));
+                    ((OpNode)newNode).Right = this.ConstructTree(expression.Substring(i + 1));
+                    return newNode;
                 }
             }
-            Node newNode; 
+            //For ValNodes or VarNodes
             try
             {
                 double value = double.Parse(expression);
@@ -76,17 +47,35 @@ namespace CptS321
             }
             catch (Exception)
             {
-                newNode = new VarNode(expression);
-                this.varDict.Add(expression, (VarNode)newNode);
+                if (expression.Contains("("))
+                {
+                    expression = expression.Remove(0, 1);
+                    Node insideNode = this.ConstructTree(expression);
+                    newNode = new ParNode("(", insideNode);
+                }
+                else if (expression.Contains(")"))
+                {
+                    expression = expression.Remove(expression.Length - 1, 1);
+                    Node insideNode = this.ConstructTree(expression);
+                    newNode = new ParNode(")", insideNode);
+                }
+                else
+                {
+                    newNode = new VarNode(expression);
+                    this.varDict.Add(expression, (VarNode)newNode);
+                }
             }
             return newNode;
         }
 
+        //Checks if root is empty
         public bool IsEmpty()
         {
             return this.root == null;
         }
 
+
+        //Sets the value(ValNode) of a VarNode in the VarDict
         public void SetVar(string varName, double varValue)
         {
             if (this.varDict.ContainsKey(varName))
@@ -95,43 +84,48 @@ namespace CptS321
             }
         }
 
+        //Recursively calls the Expression Tree's ToString() overrided methods to print out tree contents
         public override string ToString()
         {
             return this.root.ToString();
         }
 
+        //Evaluates the value of the expression
         public double Eval()
         {
             if (this.IsEmpty()) { return 0.0; }
             List<string>  expression = this.root.GetToken();
             Queue<string> outQueue = new Queue<string>();
             Stack<KeyValuePair<string, int>> opStack = new Stack<KeyValuePair<string, int>>();
-            //expression = new List<string> { "4", "+", "18", "/", "(", "9", "-", "3", ")" };
-            this.ShuntingYardAlg(expression, outQueue, opStack);  
+            this.ShuntingYardAlg(expression, outQueue, opStack);
             return this.ReversePolish(outQueue);
         }
+
+        //Converts Queue in Reverse Polish Notation into an actual double value
         private double ReversePolish(Queue<string> outQueue)
         {
             Stack<double> result = new Stack<double>();
             double n1 = 0.0, n2 = 0.0;
+            //runs through every value in the Queue
             foreach(string val in outQueue)
             {
+                //checks if val is an operator, and what type, or not
                 switch (val)
                 {
-                    case "+":
+                    case OpType.Plus:
                         n2 = result.Pop();
                         n1 = result.Pop();
                         result.Push(n1 + n2);
                         break;
-                    case "-":
+                    case OpType.Sub:
                         n2 = result.Pop();
                         n1 = result.Pop();
                         result.Push(n1 - n2); break;
-                    case "*":
+                    case OpType.Mul:
                         n2 = result.Pop();
                         n1 = result.Pop();
                         result.Push(n1 * n2); break;
-                    case "/":
+                    case OpType.Div:
                         n2 = result.Pop();
                         n1 = result.Pop();
                         result.Push(n1 / n2); break;
@@ -140,44 +134,56 @@ namespace CptS321
                         break;
                 }
             }
+            //returns the final double value
             return result.Pop();
         }
 
         private void ShuntingYardAlg(List<string> expression, Queue<string> outQueue, Stack<KeyValuePair<string, int>> opStack)
         {
-            foreach(string token in expression)
+            //While there are tokens to be read, Read a token
+            foreach (string token in expression)
             {
-                Int32.TryParse(token, out int val);
-                if (val != default(int))
-                {
+                try //If it's a number add it to queue
+                {                  
+                    int val = Int32.Parse(token);
                     outQueue.Enqueue(token);
                 }
-                else if(token == "(")
+                catch (Exception) // If it's an operator or bracket
                 {
-                    opStack.Push(new KeyValuePair<string, int>(token, 0));
-                }
-                else if (token == ")")
-                {
-                    while (opStack.Peek().Key != "(")
+                    //If it's a left bracket push it onto the stack
+                    if (token == "(")
                     {
-                        outQueue.Enqueue(opStack.Pop().Key);
+                        opStack.Push(new KeyValuePair<string, int>(token, 0));
                     }
-                    opStack.Pop(); //Left Bracket Discarded
-                }
-                else
-                {
-                    int precedence = 0;
-                    if (token == "+" || token == "-"){ precedence = 1; }
-                    else { precedence = 2; }
-                    KeyValuePair<string, int> newOp = new KeyValuePair<string, int>(token, precedence);
-                    while(opStack.Count > 0 && newOp.Value < opStack.Peek().Value)
+                    //If it's a right bracket 
+                    else if (token == ")")
                     {
-                        outQueue.Enqueue(opStack.Pop().Key);
+                        //While there's not a left bracket at the top of the stack
+                        while (opStack.Peek().Key != "(")
+                        {
+                            //Pop operators from the stack onto the output queue
+                            outQueue.Enqueue(opStack.Pop().Key);
+                        }
+                        //Pop the left bracket from the stack and discard it
+                        opStack.Pop(); //Left Bracket Discarded
                     }
-                    opStack.Push(newOp);
+                    else
+                    {
+                        int precedence = 0;
+                        if (token == OpType.Plus || token == OpType.Sub) { precedence = 1; }
+                        else { precedence = 2; }
+                        KeyValuePair<string, int> newOp = new KeyValuePair<string, int>(token, precedence);
+                        //While there's an operator on the top of the stack with greater precedence:
+                        while (opStack.Count > 0 && newOp.Value < opStack.Peek().Value)
+                        {
+                            outQueue.Enqueue(opStack.Pop().Key);
+                        }
+                        opStack.Push(newOp);
+                    }
                 }
             }
-            while(opStack.Count != 0)
+            //While there are operators on the stack, pop them to the queue
+            while (opStack.Count != 0)
             {
                 outQueue.Enqueue(opStack.Pop().Key);
             }

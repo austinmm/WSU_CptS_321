@@ -12,9 +12,7 @@ namespace ExpTreeTest
 
         static void Main(string[] args)
         {
-            //Assume expressions will NOT have any parentheses
-            //Assume expressions will only have a single type of operator, but can have any number
-            //... of instances of that operator in the expression            //Support operators +,-,*, and /            //Parse the expression that the user enters and build the appropriate tree in memory
+            //Test: 23*9-63*(123+4)
             CptS321.ExpTree expTree = null;
             Menu(expTree);
 
@@ -26,7 +24,7 @@ namespace ExpTreeTest
             do
             {
                 string currExprssion = expTree == null ? "" : expTree.ToString();
-                Console.WriteLine($"Menu (Current Expresssion: {currExprssion})");
+                Console.WriteLine($"Menu [Current Expresssion: {currExprssion}]");
                 int option = GetMenuChoice();
                 switch (option)
                 {

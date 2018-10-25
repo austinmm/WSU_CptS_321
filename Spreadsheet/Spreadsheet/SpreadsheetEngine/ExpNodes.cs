@@ -6,6 +6,13 @@ using System.Threading.Tasks;
 
 namespace CptS321
 {
+    public static class OpType {
+        public const string Plus = "+";
+        public const string Sub = "-";
+        public const string Mul = "*";
+        public const string Div = "/";
+    };
+
     public abstract class Node
     {
         public abstract double eval();
@@ -15,18 +22,18 @@ namespace CptS321
     public class OpNode : Node, ICloneable
     {
         private Node left;
-        private Node right;
-        private char operation;
         public Node Left { get { return this.left; } set { this.left = value; } }
+        private Node right;
         public Node Right { get { return this.right; } set { this.right = value; } }
-        public char Operation { get { return this.operation; } set { this.operation = value; } }
+        private string operation;
+        public string Operation { get { return this.operation; } set { this.operation = value; } }
 
-        public OpNode(char operation)
+        public OpNode(string operation)
         {
             this.operation = operation;
         }
 
-        public OpNode(char operation, Node left, Node right)
+        public OpNode(string operation, Node left, Node right)
         {
             this.operation = operation;
             this.left = left;
@@ -42,13 +49,13 @@ namespace CptS321
         {
             switch (this.operation)
             {
-                case '+':
+                case OpType.Plus:
                     return this.left.eval() + this.right.eval();
-                case '-':
+                case OpType.Sub:
                     return this.left.eval() - this.right.eval();
-                case '*':
+                case OpType.Mul:
                     return this.left.eval() * this.right.eval();
-                case '/':
+                case OpType.Div:
                     return this.left.eval() / this.right.eval();
                 default:
                     throw new Exception("Invalid Operation Provided");
@@ -96,7 +103,11 @@ namespace CptS321
 
         public override double eval()
         {
-            return this.value.eval();
+            if (this.value != null)
+            {
+                return this.value.eval();
+            }
+            return 0.0;
         }
 
         public object Clone()
@@ -138,6 +149,61 @@ namespace CptS321
         public override List<string> GetToken()
         {
             return new List<string>() { $"{this.value}" };
+        }
+    }
+
+    //Helper Enum for ParNode
+    public enum ParType { leftPar, rightPar };
+    //For Parentheses strings
+    public class ParNode : Node
+    {
+        //contents is either a valNode or VarNode Depending on what is the suffix or prefix of the Parentheses
+        private Node contents;
+        public Node Contents { get { return this.contents; } set { this.contents = value; } }
+        private ParType parentheses;
+        public ParType Parentheses { get { return this.parentheses; } set { this.parentheses = value; } }
+
+        public ParNode(string parentheses, Node contents)
+        {
+            this.parentheses = String.Equals(parentheses, "(")? ParType.leftPar: ParType.rightPar;
+            this.contents = contents;
+        }
+
+        public override string ToString()
+        {
+            switch(this.parentheses)
+            {
+                case ParType.leftPar:
+                    return $"({this.contents.ToString()}";
+                default:
+                    return $"{this.contents.ToString()})";
+            }
+        }
+
+        public override double eval()
+        {
+            if (this.contents != null)
+            {
+                return this.contents.eval();
+            }
+            return 0.0;
+        }
+
+        public override List<string> GetToken()
+        {
+            List<string> result = new List<string>();
+            switch (this.parentheses)
+            {
+                case ParType.leftPar:
+                    result.Add("(");
+                    result.AddRange(this.contents.GetToken());
+                    break;
+                default:
+                    result.AddRange(this.contents.GetToken());
+                    result.Add(")");
+                    break;
+            }
+            return result;
         }
     }
 }
