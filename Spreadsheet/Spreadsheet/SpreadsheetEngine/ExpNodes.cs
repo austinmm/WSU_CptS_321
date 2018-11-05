@@ -77,47 +77,83 @@ namespace CptS321
         }
     }
 
-    public class VarNode : Node, ICloneable
+    //public class VarNode : Node, ICloneable
+    //{
+    //    private ValNode value;
+    //    private string variable;
+    //    public ValNode Value { get { return this.value; } set { this.value = value; } }
+    //    public string Variable { get { return this.variable; } set { this.variable = value; } }
+
+    //    public VarNode(string variable, double value = 0.0)
+    //    {
+    //        this.variable = variable;
+    //        this.value = new ValNode(value);
+    //    }
+
+    //    public VarNode(string variable, ValNode value)
+    //    {
+    //        this.variable = variable;
+    //        this.value = value;
+    //    }
+
+    //    public override string ToString()
+    //    {
+    //        return $"{this.variable}";
+    //    }
+
+    //    public override double eval()
+    //    {
+    //        if (this.value != null)
+    //        {
+    //            return this.value.eval();
+    //        }
+    //        return 0.0;
+    //    }
+
+    //    public object Clone()
+    //    {
+    //        return new VarNode(this.variable, this.value);
+    //    }
+
+    //    public override List<string> GetToken()
+    //    {
+    //        return this.value.GetToken();
+    //    }
+    //}
+
+    internal class VarNode : Node, ICloneable
     {
-        private ValNode value;
-        private string variable;
-        public ValNode Value { get { return this.value; } set { this.value = value; } }
-        public string Variable { get { return this.variable; } set { this.variable = value; } }
+        private SpreadsheetCell cell;
+        public SpreadsheetCell Cell { get { return this.cell; } set { this.cell = value; } }
 
-        public VarNode(string variable, double value = 0.0)
-        {
-            this.variable = variable;
-            this.value = new ValNode(value);
-        }
 
-        public VarNode(string variable, ValNode value)
+        public VarNode(SpreadsheetCell value)
         {
-            this.variable = variable;
-            this.value = value;
+            this.cell = value;
         }
 
         public override string ToString()
         {
-            return $"{this.variable}";
+            return this.cell.Position;
         }
 
         public override double eval()
         {
-            if (this.value != null)
+            if (this.cell != null && this.cell.IsValueSet())
             {
-                return this.value.eval();
+                return this.cell.ComputeValue();
             }
             return 0.0;
         }
 
         public object Clone()
         {
-            return new VarNode(this.variable, this.value);
+            return new VarNode(this.cell);
         }
 
         public override List<string> GetToken()
         {
-            return this.value.GetToken();
+            return new List<string>() { $"{this.eval()}" };
         }
     }
 

@@ -15,6 +15,7 @@ namespace CptS321
         protected readonly int columnIndex;
         public int ColumnIndex { get { return this.columnIndex; } }
 
+        //Triggered by PropertyChanged event
         protected string text;
         public string Text {
             get { return this.text; }
@@ -26,15 +27,35 @@ namespace CptS321
             }
         }
 
+        //Is set if any Errors Occur
+        protected string errors;
+        public string Errors { get { return this.errors; } }
+
+        //The Column and Row position name
+        protected string position;
+        public string Position{ get { return this.position; } }
+
         //Value to be set/modified by subclass 
         protected string value;
-        public string Value{ get { return this.value; }}
+        public string Value { get { return this.value; }}
 
-        public Cell(int rowIndex, int columnIndex)
+
+        public Cell(int columnIndex, int rowIndex)
         {
-            this.rowIndex = rowIndex;
             this.columnIndex = columnIndex;
+            this.rowIndex = rowIndex;
+            //i.e. column = 0, row = 0 : A1
+            this.position = $"{Convert.ToChar(this.columnIndex + 65)}{this.rowIndex + 1}";
         }
+
+        //Computes the value of the text within the cell
+        public abstract double ComputeValue();
+        //Checks if the cells value has been set
+        public bool IsValueSet()
+        {
+            return this.value != null;
+        }
+
 
         //https://github.com/jbe2277/waf/wiki/Implementing-and-usage-of-INotifyPropertyChanged
         protected void RaisePropertyChanged(string propertyName)

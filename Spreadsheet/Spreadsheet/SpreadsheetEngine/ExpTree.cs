@@ -12,18 +12,26 @@ namespace CptS321
         private Node root; 
         private Node Root { get { return this.root; } set { this.root = value; } }
         //Contains ref to all VarNodes in Expression Tree
-        private Dictionary<string, VarNode> varDict;
+       // private Dictionary<string, VarNode> varDict;
 
-        public ExpTree(string expression)
+        //public ExpTree(string expression)
+        //{
+        //    //removes whitespace from expression
+        //    expression = expression.Replace(" ", String.Empty);
+        //    this.varDict = new Dictionary<string, VarNode>();
+        //    this.root = this.ConstructTree(expression);
+        //}
+
+        public ExpTree(string expression, Dictionary<string, SpreadsheetCell> dependencies)
         {
             //removes whitespace from expression
             expression = expression.Replace(" ", String.Empty);
-            this.varDict = new Dictionary<string, VarNode>();
-            this.root = this.ConstructTree(expression);
+           // this.varDict = new Dictionary<string, VarNode>();
+            this.root = this.ConstructTree(expression, dependencies);
         }
 
         //Creates the Expression tree structure
-        private Node ConstructTree(string expression)
+        private Node ConstructTree(string expression, Dictionary<string, SpreadsheetCell> dependencies)
         {
             Node newNode;
             //For opNodes
@@ -34,8 +42,8 @@ namespace CptS321
                     || currChar == '*' || currChar == '/')
                 {
                     newNode = new OpNode($"{currChar}");
-                    ((OpNode)newNode).Left = this.ConstructTree(expression.Substring(0, i));
-                    ((OpNode)newNode).Right = this.ConstructTree(expression.Substring(i + 1));
+                    ((OpNode)newNode).Left = this.ConstructTree(expression.Substring(0, i), dependencies);
+                    ((OpNode)newNode).Right = this.ConstructTree(expression.Substring(i + 1), dependencies);
                     return newNode;
                 }
             }
@@ -50,19 +58,23 @@ namespace CptS321
                 if (expression.Contains("("))
                 {
                     expression = expression.Remove(0, 1);
-                    Node insideNode = this.ConstructTree(expression);
+                    Node insideNode = this.ConstructTree(expression, dependencies);
                     newNode = new ParNode("(", insideNode);
                 }
                 else if (expression.Contains(")"))
                 {
                     expression = expression.Remove(expression.Length - 1, 1);
-                    Node insideNode = this.ConstructTree(expression);
+                    Node insideNode = this.ConstructTree(expression, dependencies);
                     newNode = new ParNode(")", insideNode);
                 }
                 else
                 {
-                    newNode = new VarNode(expression);
-                    this.varDict.Add(expression, (VarNode)newNode);
+                    if (dependencies.TryGetValue(expression, out SpreadsheetCell cell))
+                    {
+                        newNode = new VarNode(cell);
+                        //this.varDict.Add(expression, (VarNode)newNode);
+                    }
+                    else { newNode = new ValNode(0.0); }
                 }
             }
             return newNode;
@@ -71,18 +83,18 @@ namespace CptS321
         //Checks if root is empty
         public bool IsEmpty()
         {
-            return this.root == null;
+            return this.root == null || String.IsNullOrWhiteSpace(this.ToString());
         }
 
 
-        //Sets the value(ValNode) of a VarNode in the VarDict
-        public void SetVar(string varName, double varValue)
-        {
-            if (this.varDict.ContainsKey(varName))
-            {
-                this.varDict[varName].Value = new ValNode(varValue);
-            }
-        }
+        ////Sets the value(ValNode) of a VarNode in the VarDict
+        //public void SetVar(string varName, double varValue)
+        //{
+        //    if (this.varDict.ContainsKey(varName))
+        //    {
+        //        this.varDict[varName].Value = new ValNode(varValue);
+        //    }
+        //}
 
         //Recursively calls the Expression Tree's ToString() overrided methods to print out tree contents
         public override string ToString()
