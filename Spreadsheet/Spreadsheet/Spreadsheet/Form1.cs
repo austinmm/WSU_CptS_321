@@ -50,6 +50,7 @@ namespace Spreadsheet
         //    }
         //}
 
+
         private void spreadsheet_CellPropertyChanged(object sender, EventArgs e)
         {
             CptS321.Cell cell = sender as CptS321.Cell;
@@ -87,6 +88,19 @@ namespace Spreadsheet
         //        }
         //    }
         //}
+        private void ComputeAllCells()
+        {
+            for (int i = 0; i < this.Columns; i++)
+            {
+                for (int j = 0; j < this.Rows; j++)
+                {
+                    if (this.spreadsheet.CellArray[i, j].IsValueSet())
+                    {
+                        this.dataGridView1[i, j].Value = this.spreadsheet.CellArray[i, j].ComputeValue();
+                    }
+                }
+            }
+        }
 
         private void dataGridView1_CellBeginEdit(object sender, DataGridViewCellCancelEventArgs e)
         {
@@ -106,23 +120,24 @@ namespace Spreadsheet
                 this.dataGridView1[e.ColumnIndex, e.RowIndex].Value = value;
             }
             this.textBox1.Text = String.Empty;
+            this.ComputeAllCells();
         }
 
         private void dataGridView1_CellMouseEnter(object sender, DataGridViewCellEventArgs e)
         {
-            if ((e.ColumnIndex < this.Columns && e.ColumnIndex > -1)
-                && (e.RowIndex < this.Rows && e.RowIndex > -1))
-                {
-                object text = this.dataGridView1[e.ColumnIndex, e.RowIndex].Value;
-                if (text != null)
-                {
-                    CptS321.Cell cell = this.spreadsheet.CellArray[e.ColumnIndex, e.RowIndex];
-                    string value = String.IsNullOrWhiteSpace(cell.Errors) ? cell.ComputeValue().ToString() : cell.Errors;
-                    this.dataGridView1[e.ColumnIndex, e.RowIndex].Value = value;
-                    this.textBox1.Text = $"{cell.Position}={cell.Value}";
-                }
-                else { this.textBox1.Text = String.Empty; }
-            }
+            //if ((e.ColumnIndex < this.Columns && e.ColumnIndex > -1)
+            //    && (e.RowIndex < this.Rows && e.RowIndex > -1))
+            //    {
+            //    object text = this.dataGridView1[e.ColumnIndex, e.RowIndex].Value;
+            //    if (text != null)
+            //    {
+            //        CptS321.Cell cell = this.spreadsheet.CellArray[e.ColumnIndex, e.RowIndex];
+            //        string value = String.IsNullOrWhiteSpace(cell.Errors) ? cell.ComputeValue().ToString() : cell.Errors;
+            //        this.dataGridView1[e.ColumnIndex, e.RowIndex].Value = value;
+            //        this.textBox1.Text = $"{cell.Position}={cell.Value}";
+            //    }
+            //    else { this.textBox1.Text = String.Empty; }
+            //}
         }
     }
 }
