@@ -8,7 +8,7 @@ namespace CptS321
     {
         //This Event Must be implamented for INotifyPropertyChanged
         public event PropertyChangedEventHandler PropertyChanged;
-
+        public string BGColor { get; set; } = "#FFFFFF"; //Default is White
         protected readonly int rowIndex;
         public int RowIndex { get { return this.rowIndex; } }
 
@@ -17,10 +17,13 @@ namespace CptS321
 
         //Triggered by PropertyChanged event
         protected string text;
-        public string Text {
+        public string Text
+        {
             get { return this.text; }
-            set {
-                if (!String.Equals(this.text, value)){
+            set
+            {
+                if (!String.Equals(this.text, value))
+                {
                     this.text = value;
                     RaisePropertyChanged("Text");
                 }

@@ -26,7 +26,7 @@ namespace CptS321
         {
             //removes whitespace from expression
             expression = expression.Replace(" ", String.Empty);
-           // this.varDict = new Dictionary<string, VarNode>();
+            // this.varDict = new Dictionary<string, VarNode>();
             this.root = this.ConstructTree(expression, dependencies);
         }
 
