@@ -1,1 +1,1 @@
-# WSU_CptS_321: Object-Oriented Software Principles
+# CptS 321: Object-Oriented Software Principles
