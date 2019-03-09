@@ -1,2 +1,1 @@
-# cs321-amarino
-
+# WSU_CptS_360
